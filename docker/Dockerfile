@@ -14,13 +14,13 @@ ENV MQTT_HOST=localhost
 WORKDIR /app
 
 # Copy requirements.txt to the container
-COPY ../requirements.txt /app/requirements.txt
+COPY ./requirements.txt /app/requirements.txt
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the current directory contents into the container at /app
-COPY ../src /app
+COPY ./src /app
 
 # Healthcheck instruction
 HEALTHCHECK --interval=5m --timeout=3s \
