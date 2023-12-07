@@ -15,3 +15,6 @@ In the docker folder there's a Dockerfile that can be used to build the image.
 I also provided two scripts:
 1. `build.sh`: Builds the image, exposing port `6006`.
 2. `run.sh`: Runs the image. It will expose the port `6006`. 
+
+The run command has some weird volumes set up because the system monitor uses them
+to get info from the host. It's all read-only, so it's safe-ish to use.
