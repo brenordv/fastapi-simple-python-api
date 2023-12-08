@@ -23,7 +23,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./src /app
 
 # Healthcheck instruction
-HEALTHCHECK --interval=5m --timeout=3s CMD python /healthcheck.py
+HEALTHCHECK --interval=5m --timeout=3s CMD python /app/healthcheck.py
 
 # Make port 6006 available to the world outside this container
 EXPOSE 6006
