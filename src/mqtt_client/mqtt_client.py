@@ -38,12 +38,14 @@ class MQTTClientSingleton:
             try:
                 self.__logger.info(f"Attempting to reconnect (Attempt {attempt})...")
                 self.__client.reconnect()
+                time.sleep(min(60, 5 * attempt))  # Wait 5 seconds, increasing each attempt, max 60 seconds
             except Exception as e:
                 self.__logger.error(f"Reconnect failed: {e}")
-                time.sleep(5 * attempt)  # Exponential backoff could be implemented here
+                time.sleep(min(60, 5 * attempt))
                 attempt += 1
             else:
                 self.__logger.info("Reconnected to MQTT Broker")
+                break  # Exit the loop after successful reconnection
 
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
