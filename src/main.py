@@ -5,7 +5,7 @@ from mqtt_client.mqtt_client import MQTTClientSingleton
 from sys_mon.sys_mon_utils import get_system_status
 
 mqtt_cli = MQTTClientSingleton()
-app = FastAPI()
+app = FastAPI(docs_url="/api/docs", redoc_url="/api/redoc")
 api_router = APIRouter(prefix="/api/v1")
 
 

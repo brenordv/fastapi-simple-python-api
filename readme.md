@@ -1,7 +1,7 @@
 # About the project
 This is a simple project I created to showcase some basic functionality of FastAPI.
 It comes with docker, so if you want to try, you can access the API 
-at `http://localhost:8000/docs`.
+at `http://localhost:8000/api/docs`.
 
 ## Endpoints
 1. `GET '/api/v1/sys-mon'`: Returns the system's CPU and memory usage.
