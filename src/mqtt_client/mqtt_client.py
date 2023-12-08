@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 
 import paho.mqtt.client as mqtt
 from simple_log_factory.log_factory import log_factory
@@ -31,6 +32,19 @@ class MQTTClientSingleton:
             except Exception as e:
                 __logger.error(f"Failed to connect to MQTT broker. Exception: {e}")
 
+    def reconnect(self):
+        attempt = 1
+        while not self.__client.is_connected():
+            try:
+                self.__logger.info(f"Attempting to reconnect (Attempt {attempt})...")
+                self.__client.reconnect()
+            except Exception as e:
+                self.__logger.error(f"Reconnect failed: {e}")
+                time.sleep(5 * attempt)  # Exponential backoff could be implemented here
+                attempt += 1
+            else:
+                self.__logger.info("Reconnected to MQTT Broker")
+
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
             self.__logger.info("Connected to MQTT Broker!")
@@ -48,10 +62,12 @@ class MQTTClientSingleton:
 
     def publish_to_topic(self, topic, message):
         try:
+            if not self.__client.is_connected():
+                self.reconnect()
+
             ret = self.__client.publish(topic, message)
             if ret.rc != mqtt.MQTT_ERR_SUCCESS:
                 self.__logger.error(f"Publish error: {mqtt.error_string(ret.rc)}")
-
         except Exception as e:
             self.__logger.error(f"Failed to publish message. Exception: {e}")
 
