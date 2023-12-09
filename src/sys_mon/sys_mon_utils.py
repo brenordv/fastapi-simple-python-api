@@ -81,7 +81,7 @@ def get_system_status():
 
             _last_sent_nas_total = _current_time
 
-        return server_info
+        return server_info.to_dict()
 
     except Exception as e:
         _logger.exception(f"Error while getting system status: {e}")
