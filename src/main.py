@@ -1,22 +1,12 @@
-from enum import Enum
-import io
-from typing import List
-from zipfile import ZipFile
+from fastapi import FastAPI
 
-from fastapi import FastAPI, File, UploadFile, APIRouter, Response, Query, HTTPException
-from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from endpoints.messaging_endpoints import configure_messaging_endpoints
+from endpoints.pdf_endpoints import configure_pdf_endpoints
+from endpoints.system_endpoints import configure_system_endpoints
 
-from mqtt_client.mqtt_client import MQTTClientSingleton
-from pdf.compress_pdf import compress_pdf
-from pdf.merge_pdfs import merge_pdfs
-from pdf.split_pdf import split_pdf
-from sys_mon.sys_mon_utils import get_system_status
-
-mqtt_cli = MQTTClientSingleton()
 app = FastAPI(
     title="RVerse API",
-    version="1.0.0",
+    version="1.1.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
@@ -24,142 +14,13 @@ app = FastAPI(
 
 api_prefix_v1 = "/api/v1"
 
-controller_system_endpoints = APIRouter(prefix=api_prefix_v1, tags=["System"])
-controller_messaging_endpoints = APIRouter(prefix=api_prefix_v1, tags=["Messaging"])
-controller_pdf_endpoints = APIRouter(prefix=f"{api_prefix_v1}/pdf", tags=["PDF"])
+# Some endpoints will only work with my setup, so I'll only include them if the environment is configured.
+# Worst case scenario, you'll only have the PDF endpoints available.
+system_endpoints = configure_system_endpoints(api_prefix_v1)
+message_endpoints = configure_messaging_endpoints(api_prefix_v1)
+pdf_endpoints = configure_pdf_endpoints(api_prefix_v1)
 
 
-class Message(BaseModel):
-    msg: str
-
-
-class CompressionQuality(str, Enum):
-    screen = 'screen'
-    ebook = 'ebook'
-    printer = 'printer'
-    prepress = 'prepress'
-
-
-@controller_system_endpoints.get("/health", status_code=200,
-                                 summary="Returns a string 'ping? pong!' to indicate the server is up and running.")
-async def health():
-    """
-    Health check endpoint.
-
-    :return: Status code 200 if healthy.
-    """
-    return "ping? pong!"
-
-
-@controller_system_endpoints.get("/sys-stats", status_code=200,
-                                 summary="Returns the server status.")
-async def read_sys_stats():
-    """
-    Reads the system statistics.
-
-    :return: The system status.
-    """
-    return get_system_status()
-
-
-@controller_messaging_endpoints.post("/notify", status_code=201,
-                                     summary=" Sends a notification message over MQTT.")
-async def notify(payload: Message):
-    global mqtt_cli
-    """
-    Sends a notification message over MQTT.
-
-    :param msg: The message to send.
-    :return: Status code 201 if successful.
-    """
-    mqtt_cli.notify(payload.msg)
-    return
-
-
-@controller_pdf_endpoints.post("/compress", status_code=200,
-                               summary="Compresses a PDF file.")
-async def compress_pdf_endpoint(
-        uploaded_file: UploadFile = File(..., description="The PDF file to be compressed."),
-        quality: CompressionQuality = CompressionQuality.ebook):
-    """
-    Compresses a PDF file.
-    This endpoint accepts a PDF file and a compression quality level. It returns the compressed PDF.
-
-    Remarks:
-    - Quality of 'screen' may generate an unreadable PDF.\n
-    - This endpoint relies on Ghostscript. Since the API is up, this shouldn't matter... just saying, so you know.
-
-    """
-
-    # Check if the uploaded file is a PDF by its MIME type
-    if uploaded_file.content_type != 'application/pdf':
-        return {"error": "The uploaded file is not a PDF."}
-
-    # Read the uploaded PDF file
-    input_pdf_bytes = await uploaded_file.read()
-    output_pdf_bytes = compress_pdf(input_pdf_bytes, quality)
-
-    # Create a StreamingResponse to return the compressed PDF
-    return StreamingResponse(
-        output_pdf_bytes,
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": f"attachment; filename=compressed_{uploaded_file.filename}"
-        }
-    )
-
-
-@controller_pdf_endpoints.post("/split", status_code=200,
-                               summary="Splits a PDF file into two parts.")
-async def split_pdf_endpoint(
-        file: UploadFile = File(..., description="The PDF file to be split."),
-        split_page: int = Query(description="Page number to split the PDF")):
-    """
-    Splits a PDF file into two parts.
-
-    This endpoint accepts a PDF file and a page number to split the PDF at. It returns a ZIP file
-    containing the two parts.
-    """
-    input_bytes = await file.read()
-    part1_bytes, part2_bytes = split_pdf(input_bytes, split_page)
-
-    # Create a ZIP file in memory
-    zip_buffer = io.BytesIO()
-    with ZipFile(zip_buffer, 'w') as zip_file:
-        # Save each part as a file in the ZIP
-        zip_file.writestr('part1.pdf', part1_bytes)
-        zip_file.writestr('part2.pdf', part2_bytes)
-
-    # Prepare the ZIP file to be sent as a response
-    zip_buffer.seek(0)
-    return Response(content=zip_buffer.read(),
-                    media_type="application/zip",
-                    headers={"Content-Disposition": "attachment; filename=split_pdf.zip"})
-
-
-@controller_pdf_endpoints.post("/merge", status_code=200,
-                               summary="Merges multiple PDF files into a single PDF.")
-async def merge_pdfs_endpoint(files: List[UploadFile] = File(..., description="The PDF files to be merged.")):
-    """
-    Receives multiple PDF files and merges them into a single PDF.
-    Returns the bytes of the merged PDF.
-    """
-    if not files:
-        raise HTTPException(status_code=400, detail="No files were uploaded.")
-
-    pdf_bytes_list = []
-    for file in files:
-        content = await file.read()
-        pdf_bytes_list.append(content)
-        await file.close()  # Close the file explicitly
-
-    merged_pdf_bytes = merge_pdfs(pdf_bytes_list)
-
-    return Response(content=merged_pdf_bytes,
-                    media_type="application/pdf",
-                    headers={"Content-Disposition": "attachment; filename=merged.pdf"})
-
-# Include the APIRouter in the main FastAPI app
-app.include_router(controller_system_endpoints)
-app.include_router(controller_messaging_endpoints)
-app.include_router(controller_pdf_endpoints)
+app.include_router(system_endpoints)
+app.include_router(message_endpoints)
+app.include_router(pdf_endpoints)

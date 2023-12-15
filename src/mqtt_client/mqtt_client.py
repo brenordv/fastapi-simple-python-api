@@ -5,6 +5,8 @@ import time
 import paho.mqtt.client as mqtt
 from simple_log_factory.log_factory import log_factory
 
+from utils.env import mqtt_client_name, mqtt_host, mqtt_port, is_mqtt_configured
+
 
 class MQTTClientSingleton:
     __instance = None
@@ -12,9 +14,9 @@ class MQTTClientSingleton:
     __logger = None
 
     def __init__(self,
-                 client_name: str = os.environ.get("MQTT_CLIENT_NAME", "MQTTClient"),
-                 host: str = os.environ.get("MQTT_HOST", "localhost"),
-                 port: int = int(os.environ.get("MQTT_PORT", "1883"))):
+                 client_name: str = mqtt_client_name,
+                 host: str = mqtt_host,
+                 port: int = mqtt_port):
         self.__logger = log_factory(client_name, log_level=logging.DEBUG)
         if MQTTClientSingleton.__instance is None:
             __logger = log_factory(client_name)
@@ -26,6 +28,9 @@ class MQTTClientSingleton:
             self.__client.on_message = self.on_message
             self.__client.on_disconnect = self.on_disconnect
             self.__client.on_publish = self.on_publish
+
+            if not is_mqtt_configured():
+                return
 
             try:
                 self.__client.connect(host, port, 60)
@@ -63,6 +68,9 @@ class MQTTClientSingleton:
         self.__logger.info(f"Message {mid} is published")
 
     def publish_to_topic(self, topic, message):
+        if not is_mqtt_configured():
+            return
+
         try:
             if not self.__client.is_connected():
                 self.reconnect()
