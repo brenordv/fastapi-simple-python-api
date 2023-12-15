@@ -30,10 +30,14 @@ def compress_pdf(input_bytes, quality='ebook'):
     with open(input_path, 'wb') as f:
         f.write(input_bytes)
 
+    # Assuming quality is an instance of CompressionQuality enum
+    compression_level = quality.value  # Convert enum to its string value
+
     subprocess.run([
-        gs_command, '-sDEVICE=pdfwrite', '-dCompatibilityLevel=1.4',
-        f'-dPDFSETTINGS=/{quality}', '-dNOPAUSE', '-dQUIET', '-dBATCH',
-        f'-sOutputFile={output_path}', input_path
+        'gs', '-sDEVICE=pdfwrite', '-dCompatibilityLevel=1.4',
+        f'-dPDFSETTINGS=/{compression_level}',  # Use the string value here
+        '-dNOPAUSE', '-dQUIET', '-dBATCH',
+        '-sOutputFile=temp_output.pdf', 'temp_input.pdf'
     ], check=True)
 
     with open(output_path, 'rb') as f:
