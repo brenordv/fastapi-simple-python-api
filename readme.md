@@ -4,10 +4,13 @@ It comes with docker, so if you want to try, you can access the API
 at `http://localhost:8000/api/docs`.
 
 ## Endpoints
-1. `GET '/api/v1/sys-mon'`: Returns the system's CPU and memory usage.
-2. `POST '/api/v1/notify`: If the request body contains a `msg` field, a message will be sent to the `/alerts/info` 
+1. `GET '/api/v1/health'`: Health check endpoint. Returns 200 if the service is up and running.
+2. `GET '/api/v1/sys-mon'`: Returns the system's CPU and memory usage.
+3. `POST '/api/v1/notify`: If the request body contains a `msg` field, a message will be sent to the `/alerts/info` 
 MQTT queue.
-3. `GET '/api/v1/health'`: Health check endpoint. Returns 200 if the service is up and running.
+4. `POST /api/v1/pdf/compress`: Compresses a PDF file. The file must be sent as a form-data field named `file`.
+5. `POST /api/v1/pdf/split`: Splits a PDF file. The file must be sent as a form-data field named `file`.
+6. `POST /api/v1/pdf/merge`: Merges multiple PDF files.
 
 
 ## Docker image

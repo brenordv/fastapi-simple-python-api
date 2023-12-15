@@ -19,6 +19,9 @@ COPY ./requirements.txt /app/requirements.txt
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install GhostScript
+RUN apt-get update && apt-get install -y ghostscript
+
 # Copy the current directory contents into the container at /app
 COPY ./src /app
 
