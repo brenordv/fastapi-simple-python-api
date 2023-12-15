@@ -86,8 +86,8 @@ async def compress_pdf_endpoint(
     This endpoint accepts a PDF file and a compression quality level. It returns the compressed PDF.
 
     Remarks:
-    - Quality of screen may generate an unreadable PDF.\n
-    - This endpoint relies on Ghostscript.
+    - Quality of 'screen' may generate an unreadable PDF.\n
+    - This endpoint relies on Ghostscript. Since the API is up, this shouldn't matter... just saying, so you know.
 
     """
 
