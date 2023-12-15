@@ -26,3 +26,14 @@ to get info from the host. It's all read-only, so it's safe-ish to use.
 You'll need to install Ghostscript
 1. Windows: https://ghostscript.com/releases/gsdnld.html
 2. Linux: `sudo apt-get update && sudo apt-get install -y ghostscript`
+
+and you'll need to set the following environment variables:
+1. `MQTT_HOST`: The MQTT broker host. Defaults to `localhost`.
+2. `MQTT_PORT`: The MQTT broker port. Defaults to `1883` (optional. Defaults to 1883).
+3. `LOCAL_DISK_PATH`: The path to the local disk.
+4. `NAS_PATH`: The path to the NAS.
+
+Variables related to MQTT are pretty specific to my setup, so this endpoint won't do anything for anyone else. (sorry about that)
+Without 'LOCAL_DISK_PATH' and 'NAS_PATH' the system monitor won't work.
+
+The PDF endpoints will work regardless of the environment variables.
