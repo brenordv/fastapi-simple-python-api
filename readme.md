@@ -21,3 +21,8 @@ I also provided two scripts:
 
 The run command has some weird volumes set up because the system monitor uses them
 to get info from the host. It's all read-only, so it's safe-ish to use.
+
+# To run this without Docker
+You'll need to install Ghostscript
+1. Windows: https://ghostscript.com/releases/gsdnld.html
+2. Linux: `sudo apt-get update && sudo apt-get install -y ghostscript`
