@@ -151,6 +151,7 @@ async def merge_pdfs_endpoint(files: List[UploadFile] = File(..., description="T
     for file in files:
         content = await file.read()
         pdf_bytes_list.append(content)
+        await file.close()  # Close the file explicitly
 
     merged_pdf_bytes = merge_pdfs(pdf_bytes_list)
 

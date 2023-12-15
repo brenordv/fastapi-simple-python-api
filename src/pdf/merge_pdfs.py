@@ -20,4 +20,4 @@ def merge_pdfs(pdf_bytes_list: List[bytes]) -> bytes:
     pdf_merger.write(output)
     output.seek(0)
 
-    yield output.getvalue()
+    return output.getvalue()
