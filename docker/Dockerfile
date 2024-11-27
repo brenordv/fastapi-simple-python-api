@@ -5,11 +5,6 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Define environment variables
-ENV LOCAL_DISK_PATH=/local
-ENV NAS_PATH=/nas
-ENV MQTT_HOST=localhost
-
 # Set work directory in container, all the commands will be ran in this directory
 WORKDIR /app
 

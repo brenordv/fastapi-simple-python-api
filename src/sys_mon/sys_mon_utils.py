@@ -1,14 +1,11 @@
 import psutil
 import time
-import os
 from simple_log_factory.log_factory import log_factory
 
 from sys_mon.sys_stat_response import SysStats
+from utils.env import LOCAL_DISK_PATH, NAS_PATH
 
 _logger = log_factory("sys_mon_utils")
-
-LOCAL_DISK_PATH = os.getenv('LOCAL_DISK_PATH')
-NAS_PATH = os.getenv('NAS_PATH')
 
 # Initialize last sent times
 _last_sent_storage_total = None
