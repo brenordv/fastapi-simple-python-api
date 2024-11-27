@@ -2,7 +2,12 @@ import os
 from typing import TypedDict, Optional
 from dotenv import load_dotenv
 
-load_dotenv("./src/.env")
+possible_env_places = ["./src/.env", "./.env"]
+for env_place in possible_env_places:
+    if os.path.exists(env_place):
+        load_dotenv(env_place)
+        break
+
 
 class GlucoseReadingConfig(TypedDict):
     base_url: Optional[str]
