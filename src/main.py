@@ -1,8 +1,12 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
+from endpoints.glucose_monitor_endpoints import configure_glucose_monitor_endpoints
 from endpoints.messaging_endpoints import configure_messaging_endpoints
+from endpoints.news_endpoints import configure_news_articles_endpoints
 from endpoints.pdf_endpoints import configure_pdf_endpoints
 from endpoints.system_endpoints import configure_system_endpoints
+from utils.env import CORS_ALLOWED_ORIGINS
 
 app = FastAPI(
     title="RVerse API",
@@ -12,15 +16,27 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
     summary="General purpose API for RVerse.")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],    # Allows all HTTP methods
+    allow_headers=["*"],    # Allows all headers
+)
+
 api_prefix_v1 = "/api/v1"
 
-# Some endpoints will only work with my setup, so I'll only include them if the environment is configured.
+# Some endpoints depend on environment variables, so they will only be available if the required configuration is done.
 # Worst case scenario, you'll only have the PDF endpoints available.
-system_endpoints = configure_system_endpoints(api_prefix_v1)
-message_endpoints = configure_messaging_endpoints(api_prefix_v1)
-pdf_endpoints = configure_pdf_endpoints(api_prefix_v1)
+endpoints = [
+    configure_system_endpoints(api_prefix_v1),
+    configure_messaging_endpoints(api_prefix_v1),
+    configure_pdf_endpoints(api_prefix_v1),
+    configure_glucose_monitor_endpoints(api_prefix_v1),
+    configure_news_articles_endpoints(api_prefix_v1)
+]
 
-
-app.include_router(system_endpoints)
-app.include_router(message_endpoints)
-app.include_router(pdf_endpoints)
+for endpoint in endpoints:
+    if endpoint is None:
+        continue
+    app.include_router(endpoint)

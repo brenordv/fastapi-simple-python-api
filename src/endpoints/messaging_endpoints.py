@@ -12,7 +12,7 @@ def configure_messaging_endpoints(prefix):
     _messaging_endpoints = APIRouter(prefix=prefix, tags=["Messaging"])
 
     if not is_mqtt_configured():
-        return _messaging_endpoints
+        return None
 
     from mqtt_client.mqtt_client import MQTTClientSingleton
 

@@ -1,8 +1,10 @@
-fastapi == 0.103.2
-uvicorn == 0.23.2
+fastapi == 0.111.1
+uvicorn == 0.27.1
 simple-log-factory == 0.0.1
 psutil == 5.9.6
 paho-mqtt == 1.6.1
-requests == 2.31.0
+requests == 2.32.3
 PyPDF2 == 3.0.1
-python-multipart == 0.0.6
+python-multipart == 0.0.9
+raccoontools == 1.1.1
+python-dotenv == 1.0.1

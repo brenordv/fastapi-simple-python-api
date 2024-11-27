@@ -1,11 +1,10 @@
 import logging
-import os
 import time
 
 import paho.mqtt.client as mqtt
 from simple_log_factory.log_factory import log_factory
 
-from utils.env import mqtt_client_name, mqtt_host, mqtt_port, is_mqtt_configured
+from utils.env import MQTT_CLIENT_NAME, MQTT_HOST, MQTT_PORT, is_mqtt_configured
 
 
 class MQTTClientSingleton:
@@ -14,9 +13,9 @@ class MQTTClientSingleton:
     __logger = None
 
     def __init__(self,
-                 client_name: str = mqtt_client_name,
-                 host: str = mqtt_host,
-                 port: int = mqtt_port):
+                 client_name: str = MQTT_CLIENT_NAME,
+                 host: str = MQTT_HOST,
+                 port: int = MQTT_PORT):
         self.__logger = log_factory(client_name, log_level=logging.DEBUG)
         if MQTTClientSingleton.__instance is None:
             __logger = log_factory(client_name)
