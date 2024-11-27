@@ -2,11 +2,15 @@ import os
 from typing import TypedDict, Optional
 from dotenv import load_dotenv
 
-possible_env_places = ["./src/.env", "./.env"]
+possible_env_places = ["./src/.env", "./.env", "./app/.env"]
+print("Loading env variables...")
 for env_place in possible_env_places:
-    if os.path.exists(env_place):
-        load_dotenv(env_place)
-        break
+    if not os.path.exists(env_place):
+        print(f"Could not find {env_place}")
+        continue
+    print(f"Found config at: {env_place}")
+    load_dotenv(env_place)
+    break
 
 
 class GlucoseReadingConfig(TypedDict):

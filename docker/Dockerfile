@@ -25,6 +25,9 @@ RUN apt-get update && apt-get install -y ghostscript
 # Copy the current directory contents into the container at /app
 COPY ./src /app
 
+# Copy the .env file to the container at /app
+COPY ./.env /app
+
 # Healthcheck instruction
 HEALTHCHECK --interval=5m --timeout=3s CMD python /app/healthcheck.py
 
