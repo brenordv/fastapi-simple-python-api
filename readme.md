@@ -12,14 +12,15 @@ locally, it's port `8000`. I changed the swagger address to `/api/docs` (so, `ht
 1. `GET '/api/v1/health'`: Health check endpoint. Returns 200 if the service is up and running.
 2. `GET '/api/v1/sys-mon'`: Returns the system's CPU and memory usage.
 3. `POST '/api/v1/notify'`: If the request body contains a `msg` field, a message will be sent to the `/alerts/info` MQTT queue.
-4. `POST /api/v1/pdf/compress'`: Compresses a PDF file. The file must be sent as a form-data field named `file`.
-5. `POST /api/v1/pdf/split'`: Splits a PDF file. The file must be sent as a form-data field named `file`.
-6. `POST /api/v1/pdf/merge'`: Merges multiple PDF files.
-7. `GET '/api/v1/news/'`: The latest news headlines for Canada.
-8. `GET '/api/v1/glucose/latest'`: Returns the latest glucose value registered.
-9. `GET '/api/v1/glucose/time-series'`: Gets a time series of glucose values.
-10. `GET '/api/v1/glucose/daily-report'`: Returns the latest daily report.
-11. `GET '/api/v1/glucose/projections'`: Creates a projection of glucose values for the next 3 hours.
+4. `POST '/v1/error-report/:app_name'`: If the request body contains a `msg` field, a message will be sent to the `/alerts/error-reporting` MQTT queue. 
+5. `POST /api/v1/pdf/compress'`: Compresses a PDF file. The file must be sent as a form-data field named `file`.
+6. `POST /api/v1/pdf/split'`: Splits a PDF file. The file must be sent as a form-data field named `file`.
+7. `POST /api/v1/pdf/merge'`: Merges multiple PDF files.
+8. `GET '/api/v1/news/'`: The latest news headlines for Canada.
+9. `GET '/api/v1/glucose/latest'`: Returns the latest glucose value registered.
+10. `GET '/api/v1/glucose/time-series'`: Gets a time series of glucose values.
+11. `GET '/api/v1/glucose/daily-report'`: Returns the latest daily report.
+12. `GET '/api/v1/glucose/projections'`: Creates a projection of glucose values for the next 3 hours.
 
 > Some endpoints will not be available, depending on your configuration. PDF endpoints are always available.
 
