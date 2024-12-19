@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 
@@ -80,5 +81,8 @@ class MQTTClientSingleton:
         except Exception as e:
             self.__logger.error(f"Failed to publish message. Exception: {e}")
 
-    def notify(self, msg):
+    def send_info(self, msg):
         self.publish_to_topic("/alerts/info", msg)
+
+    def send_error_report(self, msg):
+        self.publish_to_topic("/alerts/error-reporting", json.dumps(msg))
