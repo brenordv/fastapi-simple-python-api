@@ -1,3 +1,7 @@
+> NOTE
+> I have changed my approach for this project, and ported the APIs to a separate and (for now) private repo, where each "controller" became a tiny standalone API.
+> Since I'll mantain the code on the other repo, I'm archiving this one.
+
 # About the project
 This is a simple project I created to showcase some basic functionality of FastAPI, and because I got tired of searching
 for reliable and free ways of working with PDF files, especially because the files contained some sensitive information.
